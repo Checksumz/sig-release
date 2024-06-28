@@ -43,7 +43,6 @@ jobs:
             echo "Validating yaml files: \n${CHANGED_FILES}"
             OUTPUT=$(python .github/scripts/validate_yaml.py $CHANGED_FILES)
             if [[ "$OUTPUT" == *"YAML Validation Failed"* ]]; then
-              echo "OUTPUT: $OUTPUT"
               echo "invalid_files=$OUTPUT" >> $GITHUB_ENV
             fi
           else 
@@ -56,9 +55,10 @@ jobs:
         with:
           script: |
             const invalidFiles = process.env.invalid_files.trim();
-            github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body: `The following YAML files are invalid:\n\n${invalidFiles}`
-            })
+            echo "invalidFiles $invalidFiles"
+            # github.rest.issues.createComment({
+            #   owner: context.repo.owner,
+            #   repo: context.repo.repo,
+            #   issue_number: context.issue.number,
+            #   body: `The following YAML files are invalid:\n\n${invalidFiles}`
+            # })
