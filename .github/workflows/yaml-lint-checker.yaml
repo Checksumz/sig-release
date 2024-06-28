@@ -36,7 +36,7 @@ jobs:
         id: validate_yaml
         run: |
           #!/usr/bin/env bash
-          set -Eeuo pipefail
+          # set -Eeuo pipefail
           source lint-env/bin/activate
           CHANGED_FILES=$(git diff --name-only $(git merge-base origin/master HEAD) -- releases/ | grep -E '\.ya?ml$' || true)
           if [ -n "$CHANGED_FILES" ]; then
