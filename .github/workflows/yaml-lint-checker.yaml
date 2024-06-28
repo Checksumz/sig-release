@@ -42,7 +42,7 @@ jobs:
           if [ -n "$CHANGED_FILES" ]; then
             echo "Validating yaml files: \n${CHANGED_FILES}"
             OUTPUT=$(python .github/scripts/validate_yaml.py $CHANGED_FILES)
-            if [[] "$OUTPUT" == *"YAML Validation Failed"* ]]; then
+            if [[ "$OUTPUT" == *"YAML Validation Failed"* ]]; then
               echo "OUTPUT: $OUTPUT"
               echo "invalid_files=$OUTPUT" >> $GITHUB_ENV
             fi
