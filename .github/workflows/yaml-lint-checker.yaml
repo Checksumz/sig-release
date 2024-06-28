@@ -41,8 +41,24 @@ jobs:
           CHANGED_FILES=$(git diff --name-only $(git merge-base origin/master HEAD) -- releases/ | grep -E '\.ya?ml$' || true)
           if [ -n "$CHANGED_FILES" ]; then
             echo "Validating yaml files: \n${CHANGED_FILES}"
-            python .github/scripts/validate_yaml.py $CHANGED_FILES
+            OUTPUT=$(python .github/scripts/validate_yaml.py $CHANGED_FILES)
+            if [ "$OUTPUT" == *"YAML Validation Failed"* ]; then
+              echo "OUTPUT: $OUTPUT"
+              echo "invalid_files=$OUTPUT" >> $GITHUB_ENV
+            fi
           else 
             echo "No YAML files changed under /releases/*"
           fi
           deactivate
+      - name: Comment on PR if invalid yaml detected
+        if: failure()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const invalidFiles = process.env.invalid_files.trim();
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `The following YAML files are invalid:\n\n${invalidFiles}`
+            })
